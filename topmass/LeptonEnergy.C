@@ -1,12 +1,16 @@
 #include "vector.h"
+#include <fstream>
 
-//void LeptonEnergy(const char *inputFile = "sourceFiles/LO/ttbar_LO_total.root")
-void LeptonEnergy(const TString & mass)
+//void LeptonEnergy(const char *inputFile /*= "sourceFiles/LO/ttbar_LO_total.root"*/)
+void LeptonEnergy(const TString & file /*= "LO_167_sayaka_1"*/)
 {
 
-  const char *inputFile = Form("/home/tjkim/work/pheno/topmass/sourceFiles/LO/ttbar_LO_%s.root",mass.Data());
-  gSystem->Load("/export/apps/delphes//libDelphes");
-
+  //const char *inputFile = Form("/home/tjkim/work/pheno/topmass/sourceFiles/LO/fromSayaka/ttbar_%s.root",file.Data());
+  //gSystem->Load("/export/apps/delphes//libDelphes");
+  const char *inputFile = Form("/data/users/seohyun/analysis/ttbar_%s.root", file.Data());
+  //const char *inputFile = Form("%s.root", file.Data());
+  //const char *inputFile = Form("/home/seohyun/work/top/scalefact/ttbar_%s.root", file.Data());
+  gSystem->Load("/home/seohyun/delphes/libDelphes");
 /*
   TFile *f2 = TFile::Open("weightfunc2.root");
   TFile *f3 = TFile::Open("weightfunc3.root");
@@ -76,7 +80,7 @@ void LeptonEnergy(const TString & mass)
 */
 
   //TFile* f = TFile::Open("hist_LO_res_60.root", "recreate");
-  TFile* f = TFile::Open(Form("hist_LO_%s.root",mass.Data()), "recreate");
+  TFile* f = TFile::Open(Form("/home/seohyun/work/top/hist7/hist_%s.root",file.Data()), "recreate");
 
   // Create chain of root trees
   TChain chain("Delphes");
@@ -122,22 +126,29 @@ void LeptonEnergy(const TString & mass)
   TH1 * channel = new TH1F("channel", "ttbar event categorization", 7, 0.0, 7.0);
 
   TH1 * h_muon_energy = new TH1F("h_muon_energy", "muon energy distribution", 5000, 0, 500);
-  
   TH1 * h_electron_energy = new TH1F("h_electron_energy", "electron energy distribution", 5000, 0, 500);
   TH1 * h_lepton_energy = new TH1F("h_lepton_energy", "lepton energy distribution", 5000, 0, 500);
 
-  TH1 * h_muon_energy_acc = new TH1F("h_muon_energy_acc", "muon energy distribution", 5000, 0, 500);
-  TH1 * h_electron_energy_acc = new TH1F("h_electron_energy_acc", "electron energy distribution", 5000, 0, 500);
+  //TH1 * h_muon_energy_acc = new TH1F("h_muon_energy_acc", "muon energy distribution", 5000, 0, 500);
+  //TH1 * h_electron_energy_acc = new TH1F("h_electron_energy_acc", "electron energy distribution", 5000, 0, 500);
   TH1 * h_lepton_energy_acc = new TH1F("h_lepton_energy_acc", "lepton energy distribution", 5000, 0, 500);
 
-  TH1 * h_muon_energy_reco = new TH1F("h_muon_energy_reco", "muon energy distribution at RECO", 5000, 0, 500);
-  TH1 * h_electron_energy_reco = new TH1F("h_electron_energy_reco", "electron energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_muon_energy_reco = new TH1F("h_muon_energy_reco", "muon energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_electron_energy_reco = new TH1F("h_electron_energy_reco", "electron energy distribution at RECO", 5000, 0, 500);
   TH1 * h_lepton_energy_reco = new TH1F("h_lepton_energy_reco", "lepton energy distribution at RECO", 5000, 0, 500);
+  TH2 * h2_lepton_energy_response = new TH2F("h2_lepton_energy_response", "lepton energy response", 5000, 0, 500,5000,0,500);
 
-  TH1 * h_muon_energy_reco_final = new TH1F("h_muon_energy_reco_final", "muon energy distribution at RECO", 5000, 0, 500);
-  TH1 * h_electron_energy_reco_final = new TH1F("h_electron_energy_reco_final", "electron energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_muon_energy_reco_S2 = new TH1F("h_muon_energy_reco_S2", "muon energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_electron_energy_reco_S2 = new TH1F("h_electron_energy_reco_S2", "electron energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_lepton_energy_reco_S2 = new TH1F("h_lepton_energy_reco_S2", "lepton energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_lepton_nbjets_reco_S2 = new TH1F("h_lepton_nbjets_reco_S2","number of b jets",5,0,5);
+
+  //TH1 * h_muon_energy_reco_final = new TH1F("h_muon_energy_reco_final", "muon energy distribution at RECO", 5000, 0, 500);
+  //TH1 * h_electron_energy_reco_final = new TH1F("h_electron_energy_reco_final", "electron energy distribution at RECO", 5000, 0, 500);
   TH1 * h_lepton_energy_reco_final = new TH1F("h_lepton_energy_reco_final", "lepton energy distribution at RECO", 5000, 0, 500);
+  TH2 * h2_lepton_energy_final_response = new TH2F("h2_lepton_energy_final_response", "lepton energy response", 5000, 0, 500,5000,0,500);
 
+  //TH1 * h_lepton_energy_less_pt = new TH1F("h_lepton_energy_less_pt", "lepton energy less than pt", 5000, 0, 500);
   //std::vector<float> lepton_E;
   //std::vector<float> lepton_E_final;
 
@@ -152,7 +163,7 @@ void LeptonEnergy(const TString & mass)
   // Loop over all events
   for(Int_t entry = 0; entry < numberOfEntries; ++entry)
   {
-    //if( entry == 20000) break;
+    //if( entry == 100000) break;
     if( entry%1000 == 0) cout << "starting with " << entry << endl;
     // Load selected branches with data from specified event
     treeReader->ReadEntry(entry);
@@ -178,7 +189,7 @@ void LeptonEnergy(const TString & mass)
     }
 
     //Lepton_E = -1.0;
-
+    
     if(branchParticle->GetEntries() > 0)
     {
       
@@ -204,14 +215,14 @@ void LeptonEnergy(const TString & mass)
             double energy = genelectron->E;
             h_electron_energy->Fill( energy, genweight );
             h_lepton_energy->Fill( energy, genweight );
-            //Lepton_E = energy;
+	    //Lepton_E = energy;
             //for(int i=0; i < nmass; i++){
             //  float w = g2[i]->Eval( energy );
             //  integral2[i] = integral2[i] + w ;
             //}
             //lepton_E.push_back( energy );
             if( energy > 20 && fabs(gen_eta) < 2.4) {
-              h_electron_energy_acc->Fill( energy, genweight );
+              //h_electron_energy_acc->Fill( energy, genweight );
               h_lepton_energy_acc->Fill( energy, genweight );
               nmuons++;
             }
@@ -225,17 +236,22 @@ void LeptonEnergy(const TString & mass)
             double energy = genmuon->E;
             h_muon_energy->Fill( energy, genweight );
             h_lepton_energy->Fill( energy, genweight );
-            //Lepton_E = energy;
+	    if( energy < abs(gen_pt))
+	    {
+	      h_lepton_energy_less_pt->Fill(energy, genweight);
+	    }
+	    //Lepton_E = energy;
             //for(int i=0; i < nmass; i++){
             //  float w = g2[i]->Eval( energy );
             //  integral2[i] = integral2[i] + w ;
             //}
             //lepton_E.push_back( energy );
             if( energy > 20 && fabs(gen_eta) < 2.4) {
-              h_muon_energy_acc->Fill( energy, genweight );
+              //h_muon_energy_acc->Fill( energy, genweight );
               h_lepton_energy_acc->Fill( energy, genweight );
               nelectrons++;
             }
+
             //int d1_id = -1;
             //int d2_id = -1;
             //if( particle->D1 >= branchParticle->GetEntries()){
@@ -411,15 +427,25 @@ void LeptonEnergy(const TString & mass)
       for(int i = 0; i < branchMuon->GetEntriesFast() ; i++){ 
         Muon * muon =  (Muon *) branchMuon->At(i);
         if( muon->P4().E() > 20 && fabs( muon->P4().Eta() < 2.4) ){
-          mymuon = muon;
+	  mymuon = muon;
+	  passmuon = true;
+	  /*if( muon->P4().E() < 20 ) {
+	    cout << "Muon Energy : "<< muon->P4().E() << endl;
+	    cout << "Muon -> Mymuon : " << muon->P4().E() << "->" << mymuon->P4().E() << endl; 
+	  }*/
+	  break;
         }
-        break;
       }
      
-      if( mymuon && ( nmuons > 0 || nelectrons > 0 ) ){ 
-        h_muon_energy_reco->Fill(mymuon->P4().E(), genweight);
+      if( passmuon && ( nmuons > 0 || nelectrons > 0 ) ){ 
+        //h_muon_energy_reco->Fill(mymuon->P4().E(), genweight);
+	/*if( mymuon->P4().E() < 20) {
+	  cout << "Mymuon Energy :: " << mymuon->P4().E() << endl;
+	  cout << "Muon->Mymuon :: " << muon->P4().E() << "->" << mymuon->P4().E() << endl;
+	}*/
         h_lepton_energy_reco->Fill(mymuon->P4().E(), genweight);
-        passmuon = true;
+        h2_lepton_energy_response->Fill(mymuon->P4().E(), genmuon->E, genweight);
+        //passmuon = true;
       }
 
     }
@@ -431,13 +457,23 @@ void LeptonEnergy(const TString & mass)
         Electron * electron =  (Electron *) branchElectron->At(i);
         if( electron->P4().E() > 20 && fabs( electron->P4().Eta() < 2.4) ){
           myelectron = electron;
+	  passelectron = true;
+	  /*if ( electron->P4().E() < 20) {
+	    cout << "Electron Energy : " << electron->P4().E() << endl;
+	    cout << "Electron -> Myelectron : " << electron->P4().E() << "->" << myelectron->P4().E() << endl;
+	  }*/
+	  break;
         }
-        break;
       }
-      if( myelectron && ( nmuons > 0 || nelectrons > 0 ) ){
-        h_electron_energy_reco->Fill(myelectron->P4().E(), genweight);
-        h_lepton_energy_reco->Fill(myelectron->P4().E(), genweight);
-        passelectron = true;
+      if( passelectron && ( nmuons > 0 || nelectrons > 0 ) ){
+        //h_electron_energy_reco->Fill(myelectron->P4().E(), genweight);
+        /*if ( myelectron->P4().E() < 20) {
+	  cout << "MyElectron Energy :: " << myelectron->P4().E() << endl;
+	  cout << "Electron->Myelectron :: " << electron->P4().E() << "->" << myelectron->P4().E() << endl;
+	}*/
+	h_lepton_energy_reco->Fill(myelectron->P4().E(), genweight);
+        h2_lepton_energy_response->Fill(myelectron->P4().E(), genelectron->E, genweight);
+        //passelectron = true;
       }
     }
 
@@ -458,10 +494,16 @@ void LeptonEnergy(const TString & mass)
     //Electron_E = -9.0;
     //Lepton_E_reco = -1.0;
     float Energy = 9.0;
-    if( passelectron && !passmuon && njets >= 4 && nbjets >= 2){
+    if( passelectron && !passmuon && njets >= 3){
       float myele_energy = myelectron->P4().E();
-      h_electron_energy_reco_final->Fill(myele_energy, genweight);
-      h_lepton_energy_reco_final->Fill(myele_energy, genweight);
+      //h_electron_energy_reco_S2->Fill(myele_energy, genweight);
+      //h_lepton_energy_reco_S2->Fill(myele_energy, genweight);
+      //h_lepton_nbjets_reco_S2->Fill(nbjets);
+      if( nbjets > 0 ){
+        //h_electron_energy_reco_final->Fill(myele_energy, genweight);
+        h_lepton_energy_reco_final->Fill(myele_energy, genweight);
+        h2_lepton_energy_final_response->Fill(myele_energy, genelectron->E, genweight);
+      }
       //lepton_E_final.push_back( myelectron->P4().E() );
       //for(int i=0; i < nmass; i++){
       //  float corr = 1.0/ h_acc->Interpolate( myelectron->P4().E() );
@@ -472,10 +514,16 @@ void LeptonEnergy(const TString & mass)
       //Lepton_E_reco = myele_energy;
     }
 
-    if( passmuon && !passelectron && njets >= 4 && nbjets >= 2){
+    if( passmuon && !passelectron && njets >= 3){
       float mymuon_energy = mymuon->P4().E();
-      h_muon_energy_reco_final->Fill(mymuon_energy, genweight);
-      h_lepton_energy_reco_final->Fill(mymuon_energy, genweight);
+      //h_muon_energy_reco_S2->Fill(mymuon_energy, genweight);
+      //h_lepton_energy_reco_S2->Fill(mymuon_energy, genweight);
+      //h_lepton_nbjets_reco_S2->Fill(nbjets);
+      if( nbjets > 0 ){
+      //  h_muon_energy_reco_final->Fill(mymuon_energy, genweight);
+        h_lepton_energy_reco_final->Fill(mymuon_energy, genweight);
+        h2_lepton_energy_final_response->Fill(mymuon_energy, genmuon->E, genweight);
+      }
       //lepton_E_final.push_back( mymuon->P4().E() );
       //for(int i=0; i < nmass; i++){
       //  float corr = 1.0/ h_acc->Interpolate( mymuon->P4().E() );
